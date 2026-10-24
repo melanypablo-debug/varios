@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Una carta para ti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --noche: #1c1530;
+    --ciruela: #3a2250;
+    --papel: #fbf1ef;
+    --tinta: #3b2a3a;
+    --rosa: #e8bfc8;
+    --rosa-oscuro: #d9a2b0;
+    --sello: #a8284a;
+    --oro: #e2bd7e;
+    --script: "Pinyon Script", "Snell Roundhand", cursive;
+    --serif: "EB Garamond", Georgia, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body {
+    font-family: var(--serif);
+    color: var(--papel);
+    background:
+      radial-gradient(1.5px 1.5px at 12% 18%, #fff8 50%, transparent 51%),
+      radial-gradient(1px 1px at 78% 12%, #fff9 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 88% 62%, #fff7 50%, transparent 51%),
+      radial-gradient(1px 1px at 24% 74%, #fff9 50%, transparent 51%),
+      radial-gradient(1px 1px at 52% 40%, #fff6 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 40% 90%, #fff7 50%, transparent 51%),
+      radial-gradient(ellipse at 50% 120%, var(--ciruela), var(--noche) 70%);
+    background-color: var(--noche);
+    overflow-x: hidden;
+  }
+
+  /* ---------- Escena del sobre ---------- */
+  #escena {
+    min-height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2.2rem; padding: 2rem 1rem;
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  #escena.oculta { opacity: 0; transform: scale(.94); pointer-events: none; }
+  .invitacion { font-family: var(--script); font-size: clamp(2rem, 7vw, 2.8rem); margin: 0; text-align: center; color: var(--rosa); }
+  .pista { margin: 0; font-style: italic; color: #d8c9dc; font-size: 1.05rem; }
+
+  .sobre {
+    position: relative; width: min(340px, 86vw); aspect-ratio: 3 / 2;
+    background: var(--rosa-oscuro); border: 0; padding: 0; cursor: pointer;
+    border-radius: 4px; box-shadow: 0 24px 50px #0008;
+    perspective: 900px; font: inherit;
+  }
+  .sobre:focus-visible { outline: 3px solid var(--oro); outline-offset: 6px; }
+  .sobre > * { position: absolute; }
+  .papel-mini {
+    left: 7%; right: 7%; top: 8%; bottom: 8%; background: var(--papel); border-radius: 2px;
+    z-index: 2; transition: transform .9s ease .5s;
+  }
+  .frente {
+    inset: 0; z-index: 3; background: var(--rosa);
+    clip-path: polygon(0 0, 50% 56%, 100% 0, 100% 100%, 0 100%);
+    border-radius: 4px;
+  }
+  .solapa {
+    left: 0; top: 0; width: 100%; height: 56%; z-index: 4; background: var(--rosa-oscuro);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top; transition: transform .8s ease, z-index 0s linear .4s;
+  }
+  .sello {
+    left: 50%; top: 56%; width: 54px; height: 54px; margin: -27px 0 0 -27px; z-index: 5;
+    border-radius: 50%; background: radial-gradient(circle at 35% 30%, #d0486a, var(--sello) 70%);
+    box-shadow: 0 3px 8px #0006, inset 0 -3px 5px #0004;
+    display: grid; place-items: center; color: #ffd9e1; font-size: 1.5rem;
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .sobre.abierto .solapa { transform: rotateX(180deg); z-index: 1; }
+  .sobre.abierto .sello { opacity: 0; transform: scale(.6); }
+  .sobre.abierto .papel-mini { transform: translateY(-38%); }
+
+  /* ---------- La carta ---------- */
+  #carta {
+    display: none; max-width: 640px; margin: 0 auto; padding: 2.5rem 1.2rem 4rem;
+  }
+  #carta.visible { display: block; animation: sube 1s ease both; }
+  @keyframes sube { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: none; } }
+  .hoja {
+    background: var(--papel); color: var(--tinta);
+    padding: clamp(1.8rem, 6vw, 3.4rem) clamp(1.4rem, 6vw, 3.6rem);
+    border-radius: 3px; box-shadow: 0 30px 70px #0009;
+    background-image: repeating-linear-gradient(transparent 0 2.04rem, #e9d3d6 2.04rem calc(2.04rem + 1px));
+    background-origin: content-box;
+  }
+  .corazon-pix { width: 84px; margin: 0 auto 1rem; animation: late 1.8s ease-in-out infinite; }
+  .corazon-pix svg { display: block; width: 100%; height: auto; shape-rendering: crispEdges; }
+  @keyframes late { 40% { transform: scale(1.12); } }
+  .saludo { font-family: var(--script); font-size: clamp(2.2rem, 8vw, 3.2rem); line-height: 1.2; margin: 0 0 1.2rem; color: var(--sello); }
+  .hoja p.parrafo { font-size: clamp(1.1rem, 3.6vw, 1.3rem); line-height: 2.04rem; margin: 0 0 2.04rem; max-width: 60ch; }
+  .parrafo, .despedida, .firma { opacity: 0; animation: aparece .9s ease forwards; }
+  @keyframes aparece { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .despedida { font-style: italic; margin: 0; line-height: 2.04rem; font-size: 1.2rem; }
+  .firma { font-family: var(--script); font-size: clamp(2rem, 7vw, 2.7rem); margin: .2rem 0 0; color: var(--sello); line-height: 1.3; }
+  .fecha { text-align: center; margin-top: 2rem; font-style: italic; color: #cdbfd3; }
+  .volver {
+    display: block; margin: 1.2rem auto 0; background: none; border: 1px solid var(--oro); color: var(--oro);
+    padding: .6rem 1.4rem; border-radius: 999px; font: inherit; font-size: 1.05rem; cursor: pointer;
+  }
+  .volver:hover { background: #e2bd7e22; }
+  .volver:focus-visible { outline: 3px solid var(--oro); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01s !important; animation-delay: 0s !important; transition-duration: .01s !important; transition-delay: 0s !important; }
+  }
+</style>
+</head>
+<body>
+
+<main id="escena">
+  <p class="invitacion" id="invitacion">Tengo algo para ti</p>
+  <button class="sobre" id="sobre" aria-label="Abrir la carta">
+    <span class="papel-mini"></span>
+    <span class="frente"></span>
+    <span class="solapa"></span>
+    <span class="sello" aria-hidden="true">♥</span>
+  </button>
+  <p class="pista">Toca el sobre para abrirlo</p>
+</main>
+
+<section id="carta" aria-live="polite">
+  <article class="hoja" id="hoja"></article>
+  <p class="fecha" id="fecha"></p>
+  <button class="volver" id="volver">Leerla otra vez</button>
+</section>
+
+<script>
+  /* ============================================================
+     EDITA AQUÍ: cambia los textos por los tuyos
+     ============================================================ */
+  const PARA = "mi ratita";            // su nombre o apodo
+  const DE = "";            // tu nombre
+  const FECHA = "";                  // ej: "23 de octubre de 2026" (vacío = no se muestra)
+  const PARRAFOS = [
+    "Amor... te extraño un montón JAJAJA más de lo que te digo y más de lo que quisiera admitir pipipipi. Hay días que me acuerdo de algo y ya quiero contártelo ahí mismo y otros que solo quiero estar a tu lado sin hacer nada, molestándote y haciéndote cosquillitas hasta que me pidas que pare y yo no paro JAJAJA. Me haces falta así de simple y contigo puedo ser yo sin esforzarme",
+    "y quiero que sepas algo viday mi chiquito, pase lo que pase estoy contigo. Si estás mal o tuviste un día horrible o te dan ganas de rendirte búscame aunque sea de madrugada, no tienes que hacerte el fuerte conmigo ni guardarte nada que para eso estoy yo. Cuenta conmigo para lo que sea hasta para las tonterías pipipipi, sabes que me tienes aquí aunque no sea de ayuda",
+    
+    
+  ];
+  const DESPEDIDA = "Te amo mucho ♡";
+  /* ============================================================ */
+
+  const sobre = document.getElementById("sobre");
+  const escena = document.getElementById("escena");
+  const carta = document.getElementById("carta");
+  const hoja = document.getElementById("hoja");
+  const volver = document.getElementById("volver");
+
+  var COLORES_PIX = { k: "#000000", r: "#ee0000", w: "#ffffff" };
+  var CORAZON_PIX = [
+    "..kkk...kkk..",
+    ".kkrrkwkrrkk.",
+    "krkkrrkrrkkrk",
+    "kkwwkrrrkwwkk",
+    "kkwwwkrkwwwkk",
+    "krkwwwkwwwkrk",
+    ".krkkkwkkkrk.",
+    "..krrrrrrrk..",
+    "...krrrrrk...",
+    "....krrrk....",
+    ".....krk.....",
+    "......k......"
+  ];
+  function corazonPixel() {
+    var rects = "";
+    for (var y = 0; y < CORAZON_PIX.length; y++) {
+      for (var x = 0; x < CORAZON_PIX[y].length; x++) {
+        var c = CORAZON_PIX[y].charAt(x);
+        if (COLORES_PIX[c]) rects += '<rect x="' + x + '" y="' + y + '" width="1.02" height="1.02" fill="' + COLORES_PIX[c] + '"/>';
+      }
+    }
+    var div = document.createElement("div");
+    div.className = "corazon-pix";
+    div.setAttribute("aria-hidden", "true");
+    div.innerHTML = '<svg viewBox="0 0 13 12" xmlns="http://www.w3.org/2000/svg">' + rects + '</svg>';
+    return div;
+  }
+
+  function construirCarta() {
+    hoja.innerHTML = "";
+    let retraso = 0.9;
+    hoja.appendChild(corazonPixel());
+    const saludo = document.createElement("h1");
+    saludo.className = "saludo";
+    saludo.textContent = "Para " + PARA + ",";
+    hoja.appendChild(saludo);
+
+    PARRAFOS.forEach(function (texto) {
+      const p = document.createElement("p");
+      p.className = "parrafo";
+      p.textContent = texto;
+      p.style.animationDelay = retraso + "s";
+      retraso += 1.1;
+      hoja.appendChild(p);
+    });
+
+    const d = document.createElement("p");
+    d.className = "despedida";
+    d.textContent = DESPEDIDA;
+    d.style.animationDelay = retraso + "s";
+    hoja.appendChild(d);
+
+    const f = document.createElement("p");
+    f.className = "firma";
+    f.textContent = DE;
+    f.style.animationDelay = (retraso + 0.6) + "s";
+    if (DE) hoja.appendChild(f);
+
+    document.getElementById("fecha").textContent = FECHA;
+  }
+
+  function abrir() {
+    if (sobre.classList.contains("abierto")) return;
+    sobre.classList.add("abierto");
+    setTimeout(function () { escena.classList.add("oculta"); }, 1700);
+    setTimeout(function () {
+      escena.style.display = "none";
+      construirCarta();
+      carta.classList.add("visible");
+      window.scrollTo(0, 0);
+    }, 2400);
+  }
+
+  function reiniciar() {
+    carta.classList.remove("visible");
+    escena.style.display = "";
+    sobre.classList.remove("abierto");
+    requestAnimationFrame(function () { escena.classList.remove("oculta"); });
+    window.scrollTo(0, 0);
+  }
+
+  sobre.addEventListener("click", abrir);
+  volver.addEventListener("click", reiniciar);
+</script>
+</body>
+</html>
